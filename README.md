@@ -1,24 +1,26 @@
-# Temperature 實驗：區塊鏈說明
-final_prompt = "請說明什麼是區塊鏈，用給高中生看的方式講解。"
-temperatures = [0.0, 0.5, 1.0]
+# 假設 generate_answer() 已定義好
 
-print("Temperature 實驗開始...\n")
+prompt = "請用簡單語言解釋區塊鏈是什麼。"
+temperature = 0.5
+token_limits = [20, 50, 200]
 
-for temp in temperatures:
-    print(f"Temperature = {temp}")
-    answer = generate_answer(final_prompt, temperature=temp, max_tokens=300)
+print("🧪 Token 限制實驗開始...\n")
+
+for limit in token_limits:
+    print(f"🔢 max_output_tokens = {limit}")
+    answer = generate_answer(prompt, temperature=temperature, max_tokens=limit)
 
     if answer:
-        print("回答（前300字）：\n", answer[:300])
+        print("✏️ 回答（前300字）：\n", answer[:300])
         try:
-            filename = f"temp_{str(temp).replace('.', '_')}_response.txt"
-            with open(filename, "w", encoding="utf-8") as f:
-                f.write(f"Temperature: {temp}\n\n")
+            filename = f"tokens_{limit}_response.txt"
+            with open(filename, "w", encoding="utf-8") as f:  # ✅ 指定編碼
+                f.write(f"🔢 max_output_tokens = {limit}\n\n")
                 f.write(answer)
-            print(f"已儲存：{filename}")
+            print(f"📄 已儲存：{filename}")
         except Exception as e:
-            print(f"儲存錯誤：{e}")
+            print(f"⚠️ 儲存失敗：{e}")
     else:
-        print("沒有產生回答")
+        print("❌ 沒有產生回答")
 
     print("-" * 60 + "\n")

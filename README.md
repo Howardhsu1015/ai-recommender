@@ -1,36 +1,24 @@
-# ai-recommender
-import google.generativeai as genai
-from google.generativeai.types import GenerationConfig
+# Temperature 實驗：區塊鏈說明
+final_prompt = "請說明什麼是區塊鏈，用給高中生看的方式講解。"
+temperatures = [0.0, 0.5, 1.0]
 
-# 設定 API 金鑰
-genai.configure(api_key="你的API金鑰")  # ⚠️ 建議用變數讀取，避免直接暴露金鑰
+print("Temperature 實驗開始...\n")
 
-# 初始化模型
-model = genai.GenerativeModel(model_name="models/gemini-1.5-pro")
+for temp in temperatures:
+    print(f"Temperature = {temp}")
+    answer = generate_answer(final_prompt, temperature=temp, max_tokens=300)
 
-# 回答函式
-def generate_answer(prompt, temperature=0.7, max_tokens=512):
-    config = GenerationConfig(
-        temperature=temperature,
-        max_output_tokens=max_tokens
-    )
-    try:
-        response = model.generate_content(prompt, generation_config=config)
-        return response.text
-    except Exception as e:
-        print(f"❌ 發生錯誤：{e}")
-        return None
+    if answer:
+        print("回答（前300字）：\n", answer[:300])
+        try:
+            filename = f"temp_{str(temp).replace('.', '_')}_response.txt"
+            with open(filename, "w", encoding="utf-8") as f:
+                f.write(f"Temperature: {temp}\n\n")
+                f.write(answer)
+            print(f"已儲存：{filename}")
+        except Exception as e:
+            print(f"儲存錯誤：{e}")
+    else:
+        print("沒有產生回答")
 
-# 測試 1：單純提問
-prompt = "請解釋量子糾纏是什麼？用簡單的語言"
-answer = generate_answer(prompt, temperature=0.3, max_tokens=300)
-print("🌟 AI 回答：\n", answer)
-
-# 測試 2：模擬根據檢索結果回答問題
-retrieved_context = "量子糾纏是量子力學中的一種現象，當兩個粒子以某種方式交互作用後，它們的量子狀態會變得緊密相關..."
-user_question = "量子糾纏是什麼？"
-
-full_prompt = f"根據以下文章內容回答問題：\n\n文章內容：\n{retrieved_context}\n\n問題：{user_question}"
-
-answer = generate_answer(full_prompt, temperature=0.5, max_tokens=400)
-print("🔍 根據內容回答：\n", answer)
+    print("-" * 60 + "\n")

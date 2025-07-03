@@ -1,26 +1,30 @@
-# 假設 generate_answer() 已定義好
+findings = """
+📝 Findings Summary
 
-prompt = "請用簡單語言解釋區塊鏈是什麼。"
-temperature = 0.5
-token_limits = [20, 50, 200]
+1. 🔥 Temperature 對輸出的影響：
+   - 當 temperature 設為 0.0 時，回答內容相對簡潔、重複性高、語句較保守，適合用在需要明確、可預測的回答場景（例如：事實查詢、程式生成）。
+   - 當 temperature 設為 0.5 時，回答語氣自然、有少量創意，整體仍屬可控範圍，適合大多數一般對話應用。
+   - 當 temperature 設為 1.0 時，模型回答會明顯更具創意，但有時也會加入不必要或不準確的資訊，適合用於創作、故事生成等情境。
 
-print("🧪 Token 限制實驗開始...\n")
+2. 📏 max_output_tokens 的限制行為：
+   - 設為 20 時，回覆被截斷得很早，無法完整表達意義。
+   - 設為 50 時，模型可輸出一個簡短摘要或簡答。
+   - 設為 200 以上，模型能夠更完整地表述概念或解釋複雜問題。
+   - 當達到上限時，回答會被截斷，即使語意還沒完成，因此需根據實際用途設計適當的長度。
 
-for limit in token_limits:
-    print(f"🔢 max_output_tokens = {limit}")
-    answer = generate_answer(prompt, temperature=temperature, max_tokens=limit)
+3. ✅ 適用情境：
+   - 低溫度 + 高 token 上限：用於準確的事實型回答或教學資料生成。
+   - 高溫度 + 低 token 上限：用於創意對話、短詩、Slogan 生成等。
 
-    if answer:
-        print("✏️ 回答（前300字）：\n", answer[:300])
-        try:
-            filename = f"tokens_{limit}_response.txt"
-            with open(filename, "w", encoding="utf-8") as f:  # ✅ 指定編碼
-                f.write(f"🔢 max_output_tokens = {limit}\n\n")
-                f.write(answer)
-            print(f"📄 已儲存：{filename}")
-        except Exception as e:
-            print(f"⚠️ 儲存失敗：{e}")
-    else:
-        print("❌ 沒有產生回答")
+4. 💡 實務應用舉例：
+   - 客服機器人：使用低溫度、適中 token 限制，以保證回應一致且符合規範。
+   - 廣告文案生成：使用高溫度、稍低 token 限制，以激發創意但不失控制。
+   - 學習摘要工具：使用中溫度與較高 token 上限，以利完成語意完整的摘要輸出。
 
-    print("-" * 60 + "\n")
+結論：透過調整 `temperature` 與 `max_output_tokens`，可靈活控制語言模型的輸出風格與長度，使其更適合特定應用場景。
+"""
+
+with open("findings.txt", "w", encoding="utf-8") as f:
+    f.write(findings)
+
+print("✅ 已成功建立 findings.txt")
